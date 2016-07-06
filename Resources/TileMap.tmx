@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tmw_desert_spacing" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="tmw_desert_spacing.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="49" name="meta_tiles" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="meta_tiles.png" width="67" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="True"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="Collectable" value="True"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background" width="20" height="15">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC5NjYGCQG8WjeBSTjRWgeNQ82psHAGcomdKwBAAA
+  </data>
+ </layer>
+ <objectgroup name="Objects" width="20" height="15">
+  <object name="player" x="140" y="454"/>
+  <object name="NPC" x="522" y="445"/>
+ </objectgroup>
+ <layer name="Obstacles" width="20" height="15">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC2NgGAWjYBRQAgyheNQ82psHAFHW9hywBAAA
+  </data>
+ </layer>
+ <objectgroup name="Items" width="20" height="15">
+  <object name="item" x="563" y="149">
+   <properties>
+    <property name="class" value="1"/>
+   </properties>
+  </object>
+  <object name="item" x="626" y="205">
+   <properties>
+    <property name="class" value="2"/>
+   </properties>
+  </object>
+  <object name="item" x="111" y="246">
+   <properties>
+    <property name="class" value="1"/>
+   </properties>
+  </object>
+  <object name="item" x="187" y="132">
+   <properties>
+    <property name="class" value="1"/>
+   </properties>
+  </object>
+  <object name="item" x="578" y="245">
+   <properties>
+    <property name="class" value="2"/>
+   </properties>
+  </object>
+  <object name="item" x="493" y="171">
+   <properties>
+    <property name="class" value="2"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>
