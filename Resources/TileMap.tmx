@@ -23,7 +23,7 @@
  </layer>
  <objectgroup name="Objects" width="20" height="15">
   <object name="player" x="140" y="454"/>
-  <object name="NPC" x="522" y="445"/>
+  <object name="enemy" x="522" y="445"/>
  </objectgroup>
  <layer name="Obstacles" width="20" height="15">
   <data encoding="base64" compression="gzip">
@@ -31,12 +31,12 @@
   </data>
  </layer>
  <objectgroup name="Items" width="20" height="15">
-  <object name="item" x="563" y="149">
+  <object name="item" x="385" y="167">
    <properties>
     <property name="class" value="1"/>
    </properties>
   </object>
-  <object name="item" x="626" y="205">
+  <object name="item" x="473" y="209">
    <properties>
     <property name="class" value="2"/>
    </properties>
@@ -51,12 +51,12 @@
     <property name="class" value="1"/>
    </properties>
   </object>
-  <object name="item" x="578" y="245">
+  <object name="item" x="394" y="70">
    <properties>
     <property name="class" value="2"/>
    </properties>
   </object>
-  <object name="item" x="493" y="171">
+  <object name="item" x="289" y="83">
    <properties>
     <property name="class" value="2"/>
    </properties>

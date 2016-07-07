@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "Player.h"
+#include "Enemy.h"
 USING_NS_CC;
 
 class GameScene : public cocos2d::Layer
@@ -23,16 +24,18 @@ public:
 	void addScoresBar();
 
 private:
-	Vec2 _playerPos;
-	Player * _player;
+	Size _winSize;	
 	TMXTiledMap* _tileMap;
 	TMXLayer* _obstacles;
+	Player * _player;
+	Enemy * _enemy;
+	Vec2 _playerPos;
 	int _playerItems;
 	int _playerItemsTotal;
 	int _enemyItems;
-	Size _winSize;
+	int _enemyItemsTotal;
 	ProgressTimer* _playerScores;
-	ProgressTimer* _NPCScores;
+	ProgressTimer* _enemyScores;
 };
 
 #endif // __GAME_SCENE_H__

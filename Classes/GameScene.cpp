@@ -1,5 +1,4 @@
 #include "GameScene.h"
-#include "Enemy.h"
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
@@ -30,6 +29,7 @@ bool GameScene::init()
 	_playerItems = 0;
 	_playerItemsTotal = 0;
 	_enemyItems = 0;
+	_enemyItemsTotal = 0;
 
 	log("visibleSize width:%f height:%f",visibleSize.width, visibleSize.height);
     auto closeItem = MenuItemImage::create(
@@ -73,6 +73,12 @@ bool GameScene::init()
 	_playerPos = Vec2(x, y);
 	_player = Player::create(_playerPos);
 	addChild(_player);
+	// add the enemy
+	auto enemyPoint = objects->getObject("enemy");
+	x = enemyPoint["x"].asInt();
+	y = enemyPoint["y"].asInt();
+	_enemy = Enemy::create(Vec2(x, y));
+	addChild(_enemy);
 
 	// add the obstacles
 	_obstacles = _tileMap->getLayer("Obstacles");
@@ -105,7 +111,7 @@ bool GameScene::init()
 		if (dict["class"].asInt() == 1) {
 			_playerItems++;
 			auto itemsp = Sprite::create("item1.png");
-			itemsp->setTag(1);
+			itemsp->setTag(3);
 			auto body = PhysicsBody::createBox(itemsp->getContentSize());
 			body->setGravityEnable(false);
 			body->setContactTestBitmask(0xFFFFFFFF);
@@ -116,7 +122,7 @@ bool GameScene::init()
 		if (dict["class"].asInt() == 2) {
 			_enemyItems++;
 			auto itemsp = Sprite::create("item2.png");
-			itemsp->setTag(2);
+			itemsp->setTag(4);
 			auto body = PhysicsBody::createBox(itemsp->getContentSize());
 			body->setGravityEnable(false);
 			body->setContactTestBitmask(0xFFFFFFFF);
@@ -127,9 +133,15 @@ bool GameScene::init()
 		
 	}
 	_playerItemsTotal = _playerItems;
+	_enemyItemsTotal = _enemyItems;
+	log("playerItemTotal %d enemyItemsTotal %d", _playerItemsTotal, _enemyItemsTotal);
 
 	// add the process bar
 	addScoresBar();
+
+	// add the update of enemy
+	_enemy->setDTime(0);
+	_enemy->schedule(schedule_selector(Enemy::EnemyUpdate));
 
 	// add the touch listener
 	auto touchListener= EventListenerTouchOneByOne::create();
@@ -188,28 +200,29 @@ bool GameScene::onContactBegan(PhysicsContact& contact)
 	log("contact happened");
 	auto sp1 = contact.getShapeA()->getBody()->getNode();
 	auto sp2 = contact.getShapeB()->getBody()->getNode();
-	if (sp1->getTag() == 1) {
-		log("get tag succeed");
+	if ((sp1->getTag() == 1 && sp2->getTag() == 3 )||(sp2->getTag()==1&&sp1->getTag()==3)) {
+		log("player shoot the item");
 		sp1->removeFromParent();
 		sp2->removeFromParent();
 		_playerItems--;
 		auto dd = ProgressTo::create(1, 100-(float)_playerItems / _playerItemsTotal * 100);
 		_playerScores->runAction(dd);
 	}
-	else if (sp2->getTag() == 1) {
-		log("get tag succeed");
+	else if ((sp1->getTag() == 2 && sp2->getTag() == 4) || (sp2->getTag() == 2 && sp1->getTag() == 4)) {
+		log("enemy shoot the item");
 		sp1->removeFromParent();
 		sp2->removeFromParent();
-		_playerItems--;
-		auto dd = ProgressTo::create(1, 100-(float)_playerItems / _playerItemsTotal * 100);
-		_playerScores->runAction(dd);
+		_enemyItems--;
+		auto dd = ProgressTo::create(1, 100-(float)_enemyItems / _enemyItemsTotal * 100);
+		_enemyScores->runAction(dd);
+		log("enemyItems left %d", _enemyItems);
 	}
 	return true;
 }
 
 void GameScene::addScoresBar()
 {
-	_playerScores = ProgressTimer::create(Sprite::create("bar.png"));
+	_playerScores = ProgressTimer::create(Sprite::create("Bar.png"));
 	_playerScores->setType(ProgressTimer::Type::BAR);
 	_playerScores->setAnchorPoint(Vec2(0, 0.5));
 	_playerScores->setMidpoint(Vec2(0, 0));
@@ -217,5 +230,14 @@ void GameScene::addScoresBar()
 	_playerScores->setPosition(Vec2(_winSize.width / 10, _winSize.height / 8 * 7));
 	_playerScores->setPercentage(100-(float)_playerItems/_playerItemsTotal*100);
 	addChild(_playerScores);
+
+	_enemyScores = ProgressTimer::create(Sprite::create("Bar.png"));
+	_enemyScores->setType(ProgressTimer::Type::BAR);
+	_enemyScores->setAnchorPoint(Vec2(0, 0.5));
+	_enemyScores->setMidpoint(Vec2(1, 0));
+	_enemyScores->setBarChangeRate(Vec2(1, 0));
+	_enemyScores->setPosition(Vec2(_winSize.width / 10 * 7, _winSize.height / 8 * 7));
+	_enemyScores->setPercentage(100 - (float)_enemyItems / _enemyItemsTotal * 100);
+	addChild(_enemyScores);
 }
 

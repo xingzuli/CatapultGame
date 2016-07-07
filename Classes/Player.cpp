@@ -43,6 +43,7 @@ void Player::throwStone(Vec2 power)
 	body->setContactTestBitmask(0xF);
 	stone->setPhysicsBody(body);
 	stone->setPosition(_playerPos);
+	stone->setTag(1);
 	this->addChild(stone);
 	stone->getPhysicsBody()->setVelocity(power);
 }
