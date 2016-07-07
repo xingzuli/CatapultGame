@@ -20,12 +20,19 @@ public:
 	void onTouchMoved(Touch *touch, Event *unused_event);
 	void onTouchEnded(Touch *touch, Event *unused_event);
 	virtual bool onContactBegan(PhysicsContact& contact);
+	void addScoresBar();
 
 private:
 	Vec2 _playerPos;
 	Player * _player;
 	TMXTiledMap* _tileMap;
 	TMXLayer* _obstacles;
+	int _playerItems;
+	int _playerItemsTotal;
+	int _enemyItems;
+	Size _winSize;
+	ProgressTimer* _playerScores;
+	ProgressTimer* _NPCScores;
 };
 
 #endif // __GAME_SCENE_H__

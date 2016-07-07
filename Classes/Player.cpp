@@ -36,8 +36,14 @@ void Player::createPlayer()
 	this->addChild(_PlayerBody);
 }
 
-void Player::throwStone(Sprite* stone, Vec2 power)
+void Player::throwStone(Vec2 power)
 {
+	auto stone = Sprite::create("stone.png");
+	auto body = PhysicsBody::createCircle(stone->getContentSize().width / 2);
+	body->setContactTestBitmask(0xF);
+	stone->setPhysicsBody(body);
+	stone->setPosition(_playerPos);
+	this->addChild(stone);
 	stone->getPhysicsBody()->setVelocity(power);
 }
 

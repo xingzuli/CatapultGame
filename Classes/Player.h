@@ -12,7 +12,7 @@ public:
 	virtual bool init(Vec2 PlayerPos);
 	static Player* create(Vec2 PlayerPos);
 	void createPlayer();
-	void throwStone(Sprite* stone, Vec2 power);
+	void throwStone(Vec2 power);
 	void createArrow();
 	void rotateArrow(Point pos);
 	void releaseArrow();
@@ -25,7 +25,6 @@ private:
 	Sprite* _arrow;
 	ProgressTimer* _powerbar;
 	Vec2 _playerPos;
-	Vec2 _power;
 
 };
 

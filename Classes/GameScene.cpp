@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "Enemy.h"
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
@@ -23,7 +24,12 @@ bool GameScene::init()
     }
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
+	_winSize = Director::getInstance()->getWinSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	_playerItems = 0;
+	_playerItemsTotal = 0;
+	_enemyItems = 0;
 
 	log("visibleSize width:%f height:%f",visibleSize.width, visibleSize.height);
     auto closeItem = MenuItemImage::create(
@@ -97,6 +103,7 @@ bool GameScene::init()
 		x = dict["x"].asInt();
 		y = dict["y"].asInt();
 		if (dict["class"].asInt() == 1) {
+			_playerItems++;
 			auto itemsp = Sprite::create("item1.png");
 			itemsp->setTag(1);
 			auto body = PhysicsBody::createBox(itemsp->getContentSize());
@@ -107,8 +114,9 @@ bool GameScene::init()
 			this->addChild(itemsp);
 		}
 		if (dict["class"].asInt() == 2) {
+			_enemyItems++;
 			auto itemsp = Sprite::create("item2.png");
-			itemsp->setTag(1);
+			itemsp->setTag(2);
 			auto body = PhysicsBody::createBox(itemsp->getContentSize());
 			body->setGravityEnable(false);
 			body->setContactTestBitmask(0xFFFFFFFF);
@@ -118,9 +126,10 @@ bool GameScene::init()
 		}
 		
 	}
+	_playerItemsTotal = _playerItems;
 
 	// add the process bar
-
+	addScoresBar();
 
 	// add the touch listener
 	auto touchListener= EventListenerTouchOneByOne::create();
@@ -168,19 +177,8 @@ void GameScene::onTouchEnded(Touch *touch, Event *unused_event)
 	auto vector = touchPos - _playerPos;
 	vector.normalize();
 
-	auto stone = Sprite::create("stone.png");
-	auto body = PhysicsBody::createCircle(stone->getContentSize().width / 2);
-	body->setContactTestBitmask(0xF);
-	stone->setPhysicsBody(body);
-	stone->setPosition(_playerPos);
-	this->addChild(stone);
-	_player->throwStone(stone, vector*_player->getTouchTime()*500);
+	_player->throwStone(vector*_player->getTouchTime()*500);
 	_player->releaseArrow();
-
-	if (stone->getPosition().x > Director::getInstance()->getVisibleSize().width || stone->getPosition().y < 0) {
-		//delete stone;
-		//stone->removeFromParent();
-	}
 
 	_player->unschedule(schedule_selector(Player::playerUpdate));
 }
@@ -194,12 +192,30 @@ bool GameScene::onContactBegan(PhysicsContact& contact)
 		log("get tag succeed");
 		sp1->removeFromParent();
 		sp2->removeFromParent();
+		_playerItems--;
+		auto dd = ProgressTo::create(1, 100-(float)_playerItems / _playerItemsTotal * 100);
+		_playerScores->runAction(dd);
 	}
 	else if (sp2->getTag() == 1) {
 		log("get tag succeed");
 		sp1->removeFromParent();
 		sp2->removeFromParent();
+		_playerItems--;
+		auto dd = ProgressTo::create(1, 100-(float)_playerItems / _playerItemsTotal * 100);
+		_playerScores->runAction(dd);
 	}
 	return true;
+}
+
+void GameScene::addScoresBar()
+{
+	_playerScores = ProgressTimer::create(Sprite::create("bar.png"));
+	_playerScores->setType(ProgressTimer::Type::BAR);
+	_playerScores->setAnchorPoint(Vec2(0, 0.5));
+	_playerScores->setMidpoint(Vec2(0, 0));
+	_playerScores->setBarChangeRate(Vec2(1, 0));
+	_playerScores->setPosition(Vec2(_winSize.width / 10, _winSize.height / 8 * 7));
+	_playerScores->setPercentage(100-(float)_playerItems/_playerItemsTotal*100);
+	addChild(_playerScores);
 }
 
