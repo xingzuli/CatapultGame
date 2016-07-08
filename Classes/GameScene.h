@@ -4,6 +4,8 @@
 #include "cocos2d.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "GameOverScene.h"
+
 USING_NS_CC;
 
 class GameScene : public cocos2d::Layer
@@ -22,6 +24,8 @@ public:
 	void onTouchEnded(Touch *touch, Event *unused_event);
 	virtual bool onContactBegan(PhysicsContact& contact);
 	void addScoresBar();
+	void isFinished();
+	static std::string _gameStatus;
 
 private:
 	Size _winSize;	

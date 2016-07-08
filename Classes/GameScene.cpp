@@ -3,9 +3,10 @@
 
 USING_NS_CC;
 
+std::string GameScene::_gameStatus = "running";
+
 Scene* GameScene::createScene()
 {
-
 	auto scene = Scene::createWithPhysics();
 	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 	scene->getPhysicsWorld()->setGravity(Vec2(0, -300));
@@ -205,17 +206,25 @@ bool GameScene::onContactBegan(PhysicsContact& contact)
 		sp1->removeFromParent();
 		sp2->removeFromParent();
 		_playerItems--;
-		auto dd = ProgressTo::create(1, 100-(float)_playerItems / _playerItemsTotal * 100);
-		_playerScores->runAction(dd);
+		if (_playerItems == 0) {
+			_gameStatus = "win";
+		}
+		auto proTo = ProgressTo::create(1, 100 - (float)_playerItems / _playerItemsTotal * 100);
+		auto seq = Sequence::create(proTo, CallFunc::create(CC_CALLBACK_0(GameScene::isFinished, this)), NULL);
+		_playerScores->runAction(seq);
 	}
 	else if ((sp1->getTag() == 2 && sp2->getTag() == 4) || (sp2->getTag() == 2 && sp1->getTag() == 4)) {
 		log("enemy shoot the item");
 		sp1->removeFromParent();
 		sp2->removeFromParent();
 		_enemyItems--;
-		auto dd = ProgressTo::create(1, 100-(float)_enemyItems / _enemyItemsTotal * 100);
-		_enemyScores->runAction(dd);
 		log("enemyItems left %d", _enemyItems);
+		if (_enemyItems == 0) {
+			_gameStatus = "lose";
+		}
+		auto proTo = ProgressTo::create(1, 100 - (float)_enemyItems / _enemyItemsTotal * 100);
+		auto seq = Sequence::create(proTo, CallFunc::create(CC_CALLBACK_0(GameScene::isFinished, this)), NULL);
+		_enemyScores->runAction(seq);
 	}
 	return true;
 }
@@ -239,5 +248,13 @@ void GameScene::addScoresBar()
 	_enemyScores->setPosition(Vec2(_winSize.width / 10 * 7, _winSize.height / 8 * 7));
 	_enemyScores->setPercentage(100 - (float)_enemyItems / _enemyItemsTotal * 100);
 	addChild(_enemyScores);
+}
+
+void GameScene::isFinished()
+{
+	if (_gameStatus != "running") {
+		log("%s", _gameStatus.c_str());
+		Director::getInstance()->replaceScene(GameOverScene::createScene());
+	}
 }
 
